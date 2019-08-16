@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>刷新Token成功，开始处理之前等待的请求</title>
+	<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+</head>
+<body>
+</body>
+<script>
+/*var token = false	
+Promise.resolve(
+  new Promise((resolve,reject) => {
+    console.log(1, 'inner Promise');						//同步
+    resolve('123');													
+  }).then(data=>{
+    console.log(2, typeof(data), data);					//返回123
+    
+    return data+'4';														//Promise.resolve 1234
+  })
+).then(data=>{
+	console.error(3, data)
+  return Promise.resolve('Randy'+data);					//Promise.resolve  Randy 1234
+}).then(data=>{
+  console.log(4, typeof(data), data)
+});*/
+
+
+//异步函数--promise
+//await返回 promise.then结果
+async function fn0(){
+	console.log('2 异步:')
+	var promise = await asyncFn2()
+	console.log(5 + promise)							//TODO 当前等待异步
+}
+async function asyncFn2() {
+  console.log('3 asyncFn2')
+  let res = await fn3()
+  console.log('4.1' + res)
+  return 'afte asyncFn2'								
+}
+function fn3(){
+	console.log('4 fn3')
+}
+
+async function fn(){
+	console.log('1同步内容')
+	await fn0()
+	console.log('6 after await fn0')				//TODO 	等待异步执行完成
+	return 'promise'
+}
+
+fn().then( res => {
+	console.log('7 async then:' + res)
+})
+
+console.log('----同步script end----')
+</script>
+</html>

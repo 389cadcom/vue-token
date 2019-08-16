@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>注册加入全局属性：$route, $router</title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+	<script src="https://cdn.bootcss.com/vue-router/2.8.1/vue-router.js"></script>
+	<script src="https://cdn.bootcss.com/vuex/3.1.0/vuex.min.js"></script>
+</head>
+<style>
+.wrap{display: flex;}
+.active{color: #f30;}
+</style>
+<body>
+new extend().$mount('#app')<br>
+<div id="extend"></div>
+<hr />
+
+<div id="app">
+	<h3>Page Route - {{min}}</h3>
+	{{msg}} config.productionTip
+	<hr />
+	<router-link to="/home">Hello</router-link>
+	<router-link to="/hi">Hi</router-link>
+	<router-link to="/extend">extend</router-link>
+	<router-view></router-view>
+</div>
+
+</body>
+<script>
+Vue.config.productionTip = false;
+
+//demo1:
+var extend = Vue.extend({
+	template: '<div>new extend().$mount()--创建实例</div>'
+})
+new extend().$mount('#extend')
+
+//demo2: 组件   {}自动调用 Vue.extend
+var Hello = Vue.component('hello', {
+	template: '<div>Hello</div>'
+})
+var Hi = Vue.component('hi', {
+	template: '<div>Hi, {{msg}}</div>',
+	data(){
+		return { msg: 'Hi' }
+	}
+})
+
+//模板优先级：$mount() -> el --> template  --> render
+var mixin = Vue.mixin({
+//	template: '<p>mixin -- template</p>',
+	data() {
+		return { min: 'mixin' }
+	}
+})
+
+//插件
+var router = new VueRouter({
+	linkActiveClass: 'active',
+	routes: [
+		{path: '/home', component: Hello},
+		{path: '/hi', component: Hi},
+		{path: '/extend', component: extend},
+	]
+})
+var store = new Vuex.Store({
+	state: {
+		count: 1
+	},
+	mutations: {
+		say(){}
+	},
+	actions: {
+		getUser(){}
+	}
+})
+
+var vm = new Vue({
+	el: '#app',
+	store,
+	router,
+	mixins: [mixin],
+	data: {
+		msg: 'Vue2.5.16'
+	},
+	watch: {
+		'$route': {
+			handler: 'startHandler',
+			immediate: true
+		}
+	},
+	mounted(){
+		//console.log(this.$root)
+		console.log(this.$route)
+		console.log(this.$store)
+	},
+	methods: {
+		startHandler(to, from){
+			console.log('immediate')
+		}
+	}
+})
+
+</script>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+</head>
+
+<body>
+</body>
+<script>
+var tokenLock, tokenTime = 0
+var url1 = 'https://www.easy-mock.com/mock/5ae9d1dd0a492d2535b91366/hfBeam-tims-api/test1'
+var url2 = 'https://www.easy-mock.com/mock/5ae9d1dd0a492d2535b91366/hfBeam-tims-api/test2'
+var url3 = 'https://www.easy-mock.com/mock/5ae9d1dd0a492d2535b91366/hfBeam-tims-api/test3'
+var cookie = {
+	setCookie: function (name, value, days=168) {
+    var d = new Date();
+    d.setTime(d.getTime() + 60*60*1000*days);
+    document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
+  },
+  getCookie: function (name) {
+      var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+      return v ? v[2] : null;
+  },
+  clearCookie: function (name) {
+      this.setCookie(name, '', -1);
+  }
+}
+
+function checkToken() {
+  var p = new Promise(function (resolve, reject) {
+    if (resolve == void (0)) return;
+    let m_access_token = cookie.getCookie('m_access_token');
+    
+    if (m_access_token) {
+      resolve();
+    } else {
+      //正在请求更新token时，其他接口等待
+      if (tokenLock && tokenTime < 30) {
+        setTimeout(function () {
+          tokenTime++;
+          checkToken().then(resolve)
+        }, 500);
+      } else {
+        tokenLock = true;
+        axios({
+          method: 'get',
+          url: url1,
+        }).then(function (res) {
+          tokenLock = false;
+          tokenTime = 0;
+          cookie.setCookie('m_access_token', '8df35a63120579468432ff908ebe9ed8');
+          resolve();
+        }).catch(function (error) {
+          reject();
+        });
+      }
+    }
+  });
+  return p;
+};
+/*var promise = checkToken()
+console.log(promise)
+*/
+
+var instance = axios.create({})
+instance.interceptors.request.use(
+config => {
+	return new Promise((resolve, reject)=>{
+		let m_access_token = cookie.getCookie('m_access_token');
+    if (m_access_token) {
+      resolve();
+    } else {
+      //正在请求更新token时，其他接口等待 TODO
+      if (tokenLock ) {
+        setTimeout(function () {
+          tokenTime++;
+          resolve()
+        }, 300);
+      } else {
+        tokenLock = true;
+        axios({ method: 'get', url: url1 }).then(function (res) {
+          tokenLock = false;
+          tokenTime = 0;
+//        cookie.setCookie('m_access_token', '8df35a63120579468432ff908ebe9ed8');
+					resolve();
+        }).catch(function (error) {
+          reject();
+        });
+      }
+    }
+	}).then( res => {
+		return config
+	})
+},error => {
+	console.log('请求出错')
+})
+
+instance({ method: 'get', url: url2, }).then(function (res) {
+	console.log(res)
+})
+instance({ method: 'get', url: url3, }).then(function (res) {
+	console.log(res)
+})
+</script>
+
+</html>

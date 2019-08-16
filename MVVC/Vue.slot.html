@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>Document</title>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.8/vue.js"></script>
+</head>
+<script>
+//2.5版本  在v-for迭代，同一个具名插槽重复出现报错
+//2.6版本 没有问题
+</script>
+
+<body>
+<div id="app">
+	{{msg}} config.productionTip 
+	<hr />
+	<my-layout>
+		<header slot="header">头部内容  </header>
+		<p class="container"> 默认具名内容 </p>
+		<template v-slot:footer="subProps">
+			{{subProps.count}}
+			<br>
+			2.6版本v-slot新语法, v-slot需跟在template中 
+		</template>
+		迭代内容:
+		<div slot="li">ul>li</div>
+	</my-layout>
+	<my-layout v-slot:footer>默认具名插槽</my-layout>
+</div>
+
+<template id="layout">
+<div class="slot">
+	<slot name="header"></slot>
+	<slot>default</slot> <!--绑定在 <slot>元素为插槽 prop, 传给父级作用域使用 ,通过v-slot带一个值调用-->
+	<slot name="footer" v-bind:count="count">footer {{subdata}}</slot> 
+	<ul class="">
+		<li v-for="i in count">
+			<p>{{i}}</p>
+			<slot name="li">li</slot>
+		</li>
+	</ul>
+</div>
+</template>
+</body>
+<script>
+new Vue({
+	el: '#app',
+	data: {
+		msg: 'Hello'
+	},
+	components: {
+		'MyLayout': {
+			template: '#layout',
+			data(){
+				return {
+					count:5,
+					subdata: 'subdata',
+					footer: 'bottom'
+				}
+			}
+		},
+	}
+})
+</script>
+
+</html>

@@ -1,0 +1,20 @@
+@import './sass/_utils';
+
+
+.arrow1{
+  @include triangle
+}
+.arrow2{
+  @include triangle(left)
+}
+.arrow3{
+  @include triangle(top)
+}
+.arrow4{
+  @include triangle(bottom)
+}
+
+
+.arrow{
+  @include arrow;
+}

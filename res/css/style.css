@@ -1,0 +1,52 @@
+.arrow1 {
+  display: inline-block;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent;
+  border-right-width: 0;
+  border-left-color: #ddd;
+}
+
+.arrow2 {
+  display: inline-block;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent;
+  border-left-width: 0;
+  border-right-color: #ddd;
+}
+
+.arrow3 {
+  display: inline-block;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent;
+  border-top-width: 0;
+  border-bottom-color: #ddd;
+}
+
+.arrow4 {
+  display: inline-block;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom-width: 0;
+  border-top-color: #ddd;
+}
+
+.arrow {
+  position: absolute;
+  display: inline-block;
+  content: " ";
+  height: 8px;
+  width: 8px;
+  border-width: 1px 1px 0 0;
+  border-color: #C8C8CD;
+  border-style: solid;
+  -webkit-transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+          transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+  top: 50%;
+  margin-top: -4px;
+  right: 2px;
+}
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title></title>
+	<script src="https://cdn.bootcss.com/react/16.7.0/umd/react.development.js"></script>
+	<script src="https://cdn.bootcss.com/react-dom/16.7.0/umd/react-dom.development.js"></script>
+	<script src="https://cdn.bootcss.com/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+	<div id="app"></div>
+</body>
+<script type="text/babel">
+//import React, { Component } from 'react'
+
+class App extends React.Component {
+	render(){
+		return <div>Hello React Component</div>
+	}
+}
+var arr = ['A', 'B', 'C', 'D']
+function C(props){
+	console.log(props)
+	return (
+		<ul className='lists'>
+			{ arr.map((item, i) => <li key={i}>{item}</li>) }
+		</ul>
+	)
+}
+
+
+ReactDOM.render(
+	<div>
+		<p>Hello, World</p>
+		<App/>
+	</div>,
+	document.getElementById('app')
+)
+</script>
+</html>

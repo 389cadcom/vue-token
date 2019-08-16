@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>插件</title>
+  <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+</head>
+<style>
+.toast{
+	position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+</style>
+
+<body>
+  <div id="app">
+  	{{msg}}
+  </div>
+</body>
+
+<script>
+var ToastComponent = Vue.component('Toast', {
+	data(){
+		return {
+			show: false,
+			text: '加载中',
+			time: 3000,
+			timer: null
+		}
+	},
+	template: `
+		<div class="toast" v-show="show"> {{text}} </div>
+	`,
+	created(){
+		this.start()
+	},
+	methods: {
+		start(){
+			this.timer = setTimeout(()=>{
+		  	this.show = false;
+		  	clearTimeout(this.timer)
+		  	this.timer = null
+		  	//this.destory()
+		  }, this.time)
+		},
+		destory(){
+			this.$destroy()
+      this.$el.parentNode.removeChild(this.$el)
+		}
+	}
+})
+var vm;
+const plugin = (options) =>{
+  let Toast = Vue.extend(ToastComponent)
+  if(!vm){
+    vm = new ToastComponent({
+    	el: document.createElement('div')
+    })
+//  console.log(vm.$mount())
+    document.body.appendChild(vm.$el)		//vm.$mount().$el
+  }
+/*  if(timer){
+  	clearTimeout(timer)
+  	timer = null
+  	vm.show = false;
+  	vm.text = ''
+  }*/
+  
+  if(typeof options === 'string'){
+  	vm.text = options
+  }else if(typeof options === 'object'){
+  	let {text, time} = options
+  	vm.text = text
+  	vm.time = time || 3000
+  }
+  vm.show = true
+  
+}
+plugin.close = () =>{
+	if(timer){
+		clearTimeout(timer)
+  	timer = null
+  	vm.show = false;
+  	vm.text = ''
+	}
+}
+plugin.install = Vue =>{
+	Vue.prototype.$toast = plugin
+}
+
+Vue.use(plugin)
+new Vue({
+  el: '#app',
+  data: {
+    msg: 'msg'
+  },
+  mounted(){
+  	this.$toast({text: '加载中...', time: 3000})
+  }
+});
+
+this.$nextTick(() => {
+  let $el = document.querySelector('.box');
+  let offsetHeight = $el.offsetHeight;
+
+  $el.addEventListener('scroll', ()=>{
+    let scrollTop    = $el.scrollTop;
+    let scrollHeight = $el.scrollHeight;
+    if(scrollTop + offsetHeight > scrollHeight){
+      //分页加载
+    }
+  })
+})
+</script>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+	<script src="https://cdn.bootcss.com/vuex/3.0.1/vuex.min.js"></script>
+</head>
+<body>
+	<div id="app">
+		<button @click="doneHandler">已完全</button>
+		<button @click="cancelHandler">取消</button>
+		<p>已完全</p>
+		<ul>
+			<li v-for="item in dones">{{item.a}}</li>
+		</ul>
+		<p>取消</p>
+		<ul>
+			<li v-for="item in cancels">{{item.a}}</li>
+		</ul>
+	</div>
+</body>
+
+<script>
+var store = new Vuex.Store({
+	state: {
+		events: [{a: 'A', state:0}, {a:'B', state:1}, {a:'C', state:2}]
+	},
+	getters: {
+		getUnDone: (state) => (status) => {			//链式函数
+			return state.events.filter( item => item.state == status)
+		},
+		getDone(state){
+			return state.events.filter( item => item.state==1)
+		},
+		getCancel(state){
+			return state.events.filter( item => item.state==2)
+		}
+	},
+	mutations: {
+		eventDone(state, obj){
+			var current = state.events.find( item => item.a == obj.a)
+			current.state = 1;
+		},
+		cancelDone(state, obj){
+			var current = state.events.find( item => item.a == obj.a)
+			current.state = 2;
+		},
+	},
+	actions: {
+		moveToDone(context, key){
+			context.commit('eventDone', {a: key})
+		},
+		cancelToDone({commit}, key){
+			commit('cancelDone', {a: key})
+		},
+	}
+})
+
+new Vue({
+	el:'#app',
+	store,
+	computed: {
+		...Vuex.mapGetters(['getDone', 'getCancel']),
+		dones(){
+			return this.$store.getters.getUnDone(1)
+		},
+		unDones(){
+			return this.$store.getters.getUnDone(0)
+		},
+		cancels(){
+			return this.$store.getters.getUnDone(2)
+		},
+	},
+	data: {
+		number: 10,
+	},
+	methods: {
+		doneHandler(){
+			this.$store.dispatch('moveToDone', 'C')
+		},
+		cancelHandler(){
+			this.$store.dispatch('cancelToDone', 'B')
+		}
+	}
+})
+</script>
+</html>

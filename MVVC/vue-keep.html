@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title></title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+	<script src="https://cdn.bootcss.com/react/16.8.3/umd/react.development.js"></script>
+	<script src="https://cdn.bootcss.com/react-dom/16.8.6/umd/react-dom.development.js"></script>
+	<script src="https://cdn.bootcss.com/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+	<div id="app">
+<!--	<keep-alive>
+	<ul>
+		<li v-for="item in list"><a href="0.test.html">{{item}}</a></li>
+	</ul>
+	</keep-alive>-->
+	</div>
+</body>
+<script type="text/babel">
+ReactDOM.render(
+	<div>
+		<h1>Hi</h1>
+	</div>,
+	document.getElementById("app")
+)
+
+/*new Vue({
+	el:'#app',
+	data:{
+		list: [1,2,3]
+	},
+	beforeDestroy(){
+		console.log('123')
+	},
+	destroyed(){
+		console.log('123')
+	},
+	mounted(){
+		this.list = [4, 5, 6]
+	},
+	activated(){
+		console.log(456)
+	}
+})*/
+</script>
+</html>

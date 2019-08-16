@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="http://unpkg.com/vue"></script>
+</head>
+<body>
+<div id="app">
+  <p>{{ obj.a }}</p>
+  <p>computed: {{ getObj }}</p>
+  <input v-model="keyword" type="text" name="keyword"/>
+</div>
+</body>
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    obj: { a: 'Hello' },
+    test: 'aaa',
+    keyword: '',
+    pageSize: 1,
+    areaId: 'Z001'
+  },
+  computed: {
+    reqParams(){
+      return {
+        keyword: this.keyword,
+        areaId : this.areaId,
+        page   : this.pageSize,
+      }
+    }
+  },
+  watch: {
+    keyword(data){
+        this.keyword=data
+        this.fetchData()
+    },
+    region(data){
+        this.region=data
+        this.fetchData()
+    },
+    deviceId(data){
+        this.deviceId=data
+        this.fetchData()
+    },
+    page(data){
+        this.page=data
+        this.fetchData()
+    },
+  },
+  mounted() {
+    this.test = 'bbb'
+  },
+  methods: {
+    getData(params) {
+      console.log(params);
+    },
+    //TODO 每个参数change的地方绑定事件，并传递参数值
+    changeParams(name, value) {
+      this[name] = value
+      this.getData()
+    }
+  },
+})
+</script>
+</html>

@@ -1,0 +1,182 @@
+//webpack打包 -webkit-line-clamp丢失
+//设置browserslist "not ie <= 8"
+
+@mixin ellipsis($line:1){
+  @if($line == 1) {
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $line;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+%ellipsis {
+	@include ellipsis
+}
+
+//高清屏1像素线条
+@mixin oneline($direction: bottom, $color: rgba(0, 0, 0, .1)) {
+	position: absolute;
+	content: ' ';
+	#{$direction}: 0px;
+  border-#{$direction}: 1px solid $color;
+
+	@if ($direction == top) or ($direction == bottom) {
+		transform: scaleY(0.5);
+		left: 0;
+		right: 0;
+	}
+	@if ($direction == left) or ($direction == right) {
+		transform: scaleX(0.5);
+		top: 0;
+		bottom: 0;
+	}
+}
+%oneline{
+  @include oneline;
+}
+
+@mixin boxline($color: #e6e6e6, $radius:0){
+	position: absolute;
+	content: ' ';
+	width: 200%;
+	height: 200%;
+	left: 0;
+	top: 0;
+	border: 1px solid $color;
+	border-radius: $radius;
+	transform: scale(0.5);
+	transform-origin: top left;
+}
+
+//居中
+@mixin middle($direction: both) {
+  position: absolute;
+  @if $direction == both {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  @if $direction == vertical {
+    top: 50%;
+    transform: translateY(-50%)
+  }
+  @if $direction == horizontal {
+    left: 50%;
+    transform: translateX(-50%)
+  }
+}
+
+//渐变色
+@mixin gradient($color1, $color2, $direction: horizontal) {
+  @if $direction == horizontal {
+    background: linear-gradient(to right, $color1, $color2);
+  }
+  @else if $direction == vertical {
+    background: linear-gradient(to bottom, $color1, $color2);
+  }
+  @else {
+    background: radial-gradient(ellipse at center, $color1, $color2)
+  }
+}
+
+@mixin mask($color: rgba(0, 0, 0, .65)) {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+  bottom: 0;
+  z-index: 99;
+	background-color: $color;
+}
+
+//三角形
+@mixin arrow( $width: 7px, $border: 1px, $borderColor: #ccc, $bgColor: #fff, $fill: left ) {
+	$width1: $width - $border;
+	position: relative;
+	display: inline-block;
+	width: $width * 2;
+	height: $width * 2;
+	&:before, &:after {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-color: transparent;
+	}
+	&:before {
+		top: 0;
+		left: 0;
+		border-width: $width;
+		border-#{$fill}-color: $borderColor;
+	}
+	&:after {
+		@if ($fill==top) or ($fill==bottom) {
+			left: $border;
+		}
+		@if ($fill==left) or ($fill==right) {
+			top: $border;
+		}
+		#{$fill}: 0;
+		border-width: $width1;
+		border-#{$fill}-color: $bgColor;
+	}
+}
+
+//小三角
+@mixin  triangle($direction: right, $size: 5px, $color: #ddd) {
+  display: inline-block;
+  border-width: $size;
+  border-style: solid;
+  border-color: transparent;
+  border-#{$direction}-width: 0;
+
+  @if $direction == right {
+    border-left-color: $color;
+  }
+  @if $direction == left {
+    border-right-color: $color;
+  }
+  @if $direction == top {
+    border-bottom-color: $color;
+  }
+  @if $direction == bottom {
+    border-top-color: $color;
+  }
+}
+
+@mixin arrow($width:8px, $height:8px, $color:#C8C8CD ) {
+  position: absolute;
+  display: inline-block;
+  content: " ";
+  height: $width;
+  width: $height;
+  border-width: 1px 1px 0 0;
+  border-color: #C8C8CD;
+  border-style: solid;
+  transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+  top: 50%;
+  margin-top: -$height/2;
+  right: 2px;
+}
+
+//去除单位
+@function stripUnits($number){
+  @return $number / ($number*0 + 1);
+}
+
+@function px2rem($num, $base:37.5){
+  @return stripUnits($num) / 37.5 * 1rem
+}
+
+@mixin px2rem($attr, $num, $base:37.5) {
+  $list: ();
+  @for $i from 1 through length($num) {
+    $value: stripUnits(nth($num, $i)) / $base * 1rem;
+    $list: append($list, $value);                             //$list添加
+  }
+  #{$attr}: $list;
+}

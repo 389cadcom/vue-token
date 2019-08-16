@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<p>{{ count | fixed(4)}} {{ total }}</p>
+	<hello/>
+</div>
+</body>
+
+<script>
+Vue.filter('fixed', (val, num=2)=>{
+	return val.toFixed(num)
+})
+/**
+ * watch
+ * deep, immmedia, handler
+ */
+Vue.component('Hello', {
+	template: `<div>Hello</div>`
+})
+vm = new Vue({
+	el:'#app',
+	data:{
+		count: 20,
+		a: 1,
+		b: {age: 10}
+	},
+	computed: {
+		total(){
+			return this.count + 10;
+		}
+	},
+	watch: {
+		a(val, old){
+			console.log(val, old)
+		},
+		b:{
+			handler(val, old){
+				console.log('obj', JSON.stringify(val), JSON.stringify(old))
+			},
+			deep: true
+		},
+		'b.age'(val, old){
+			console.log(val, old)
+		}
+	},
+	beforeCreate(){
+		console.log(this.$el, this.count)
+	},
+	created(){
+		console.log(this.$el)
+	},
+	updated(){
+		console.log(this.$el)
+	}
+})
+</script>
+</html>

@@ -1,0 +1,97 @@
+<script>
+
+import axios from 'axios';
+
+var timestamp = '';
+var headtoken = '';
+var sign = '';
+var domain = '/bop-web';
+var instance = axios.create();
+
+//添加参数
+function buildParamStr(param, timestamp, url, signtoken) {
+  param["timestamp"] = timestamp;
+  param["url"] = url;
+  param["signtoken"] = signtoken;
+  var keys = [];
+  var paramstr = "";
+  for (var paramkey in param) {
+    keys.push(paramkey);
+  }
+  keys.sort();
+  for (var i = 0; i < keys.length; i++) {
+    var itemkey = keys[i];
+    if (typeof(param[itemkey]) === 'object') {
+      param[itemkey] = JSON.stringify(param[itemkey]);
+    }
+    if (i === keys.length - 1) {
+      paramstr += itemkey + "=" + param[itemkey];
+    } else {
+      paramstr += itemkey + "=" + param[itemkey] + "&";
+    }
+  }
+  // console.log(paramstr);
+  return paramstr;
+}
+
+//加密
+function bulidSign(paramdata, timestamp, url, signtoken) {
+  var paramStr = buildParamStr(paramdata, timestamp, url, signtoken);
+  delete paramdata.signtoken;
+  delete paramdata.timestamp;
+  delete paramdata.url;
+  
+  var hash = CryptoJS.SHA256(paramStr);
+  // console.log(hash.toString());
+  return hash.toString();
+}
+function getToken() {
+  return instance({url: '/token/getToken', type: 'get'});
+}
+
+// 超时时间
+axios.defaults.timeout = 5000;
+
+//响应拦截
+axios.interceptors.response.use((res) => {
+  if(res.headers.sessionstatus === 'timeout') {
+    var url = btoa(window.location.href);
+    window.location.href = domain + "/login/logindo?r=" + url;
+  }
+  return res;
+}, (error) => {
+   console.log(axios.interceptors.response);
+  
+  return Promise.reject(error);
+});
+
+//请求拦截
+axios.interceptors.request.use(
+  config => {
+    return getToken().then((res) => {
+      console.log('gettoken done');
+      config = config ? config : {};
+      config.params = config.params ? config.params : {};
+      timestamp = res.data.data.timestamp;
+      headtoken = res.data.data.headtoken;
+      sign = bulidSign(config.params, res.data.timestamp, config.url, res.data.signtoken);
+      
+      config.headers = {
+        timestamp: timestamp,
+        headtoken: headtoken,
+        sign: sign
+      };
+      return config;
+    }).catch((res) => {
+      console.log(res);
+    });
+}, error => {
+  Message.error({
+    message: '加载超时'
+  });
+  return Promise.reject(error)
+});
+
+export default axios
+
+</script>

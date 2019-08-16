@@ -1,0 +1,7 @@
+{
+	"ret": 200,
+	"data": {
+		"name": "vuex",
+		"value": 100
+	}
+}

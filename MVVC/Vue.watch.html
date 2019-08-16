@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title></title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+</head>
+<body>
+<!--响应式属性值-->
+<div id="app0">
+	<p>name: {{username}}</p>
+	<button @click="changeName">改变</button>
+</div>
+<script>
+new Vue({
+	el: '#app0',
+	data: {
+		userinfo:{
+			firstName: 'lonve',
+			lastName: 'zz'
+		},
+		username: 'lonve zz'
+	},
+	watch: {
+		userinfo(val, oldVal){
+			this.username = val.firstName + val.lastName
+		},
+		'userinfo.firstName'(val, oldVal){
+			this.username = val.firstName + val.lastName
+		}
+	},
+	methods:{
+		changeName(){
+			if (this.username === 'lonve zz') {
+				/*this.userinfo = {
+					firstName: 'Summer',
+					lastName: 'Wu'
+				}*/
+        this.userinfo.firstName = 'Summer'
+        this.userinfo.lastName = 'Wu'
+      } else {
+        this.userinfo.firstName = 'lonve'
+        this.userinfo.lastName = 'zz'
+      }
+		}
+	}
+})
+
+
+</script>
+
+</html>

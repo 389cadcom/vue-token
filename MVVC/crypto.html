@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="//unpkg.com/crypto-js/crypto-js.js"></script>
+	<script src="https://cdn.bootcss.com/crypto-js/3.1.9/crypto-js.min.js"></script>
+</head>
+<body>
+</body>
+<script>
+var str = 'access_token=757bc3ad5aae5c5b01f67101a91a4b02&client_id=tims_app&deviceId=BA93F7D7-96ED-4223-ADDC-CAC9E5EF86B7&format=json&salt=WBRB69RDno9xBgV7Ea5wHItbo0FUplZx&sign_method=md5&timestamp=1534382699275&v=1.0'
+//var s = crypto.createHash("md5").update(str).digest("hex").toUpperCase()
+/*s = CryptoJS.MD5(str);
+console.log(s.toString())*/
+
+/*var arr = [['name', 1], ['age', 2]]
+obj = arr.reduce((acc, curr)=>(acc[curr[0]]=curr[1], acc), {})
+console.log(obj)*/
+
+/*Promise.race([
+	new Promise((resolve, reject)=>{
+		setTimeout(()=> resolve(3) ,300)
+	}),
+	new Promise((resolve, reject)=>{
+		setTimeout(()=> resolve(2) ,200)
+	}),
+	new Promise((resolve, reject)=>{
+		setTimeout(()=> reject(1) ,400)
+	}),
+]).then( res => {
+	console.log(res)
+}).catch( err => {
+	console.log('err:' + err)
+})*/
+async function fn(){
+	console.log(123)
+}
+
+var arr = ['a', 'b', 'c', 'd', 'e']
+
+//
+	/*for(var item of arr){
+		await fn()
+		console.log(item)
+	}*/
+	
+//for循环与await
+arr.forEach(async (item)=>{
+	await fn()
+	console.log(item)
+})
+
+</script>
+</html>

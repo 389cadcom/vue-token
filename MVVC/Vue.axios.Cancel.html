@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title></title>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.js"></script>
+</head>
+<body>
+<div class="page" id="app">
+  <button @click="getMsg" class="get-msg">获取数据</button>
+  <button @click="cancelHandler" class="cancel">取消获取</button>
+  <ul>
+    <li v-for="item in items">{{item.name}}</li>
+  </ul>
+</div>
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!',
+    items: [],
+    cancel: null
+  },
+  methods: {
+    getMsg () {
+      let CancelToken = axios.CancelToken
+      let self = this
+      axios.get('https://www.easy-mock.com/mock/5ae9d1dd0a492d2535b91366/hfBeam-tims-api/test', {
+        cancelToken: new CancelToken(function executor(c) {
+          self.cancel = c
+          // 这个参数 c 就是CancelToken构造函数里面自带的取消请求的函数，这里把该函数当参数用
+          console.log(c)
+        })
+      }).then(res => {
+        this.items = res.data
+      }).catch(err => {
+        console.log(err)
+      })
+
+
+      //手速够快就不用写这个定时器了，点击取消获取就可以看到效果了
+      setTimeout(function () {
+//      self.cancel()
+      }, 100)
+    },
+    cancelHandler () {
+      // 在这里去判断你的id 1 2 3，你默认是展示的tab1，点击的时候不管你上一个请求有没有执行完都去调用这个cancel()，
+      this.cancel()
+    }
+  }
+})
+</script>
+</body>
+</html>

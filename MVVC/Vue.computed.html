@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title></title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+</head>
+<body>
+<!--响应式属性值-->
+<div id="app0">
+	<p>非响应式: {{getDate}}</p>
+	<p>响应式: {{getDate1}}</p>
+</div>
+<script>
+new Vue({
+	el: '#app0',
+	data: {
+		date: ''
+	},
+	computed:{
+		getDate(){										//不是响应式属性值, 依赖值没有更新, 计算属性并不会重新计算
+			return Date.now()
+		},
+		getDate1(){
+			return this.date
+		}
+	},
+	created(){
+		setInterval(()=>{
+			this.date = Date.now()
+		}, 1000)
+	}
+})
+</script>
+
+<!--执行异步操作-->
+<hr />
+<div id="app">
+	 <!--<div>{{ getObj.a }}</div>-->
+	 <div>{{ obj1.a }}</div>
+</div>
+</body>
+<script>
+var app = new Vue({
+ el: '#app',
+ data: {
+  obj: {a: 'hello'},
+  obj1: {a: 'hello'},
+  test: 'aaa'
+ },
+ computed: {
+  getObj () {
+   setTimeout(() => {				//异步操作导致没有返回值同时调用getObj.a对象的属性
+    this.obj.a = this.test + 'word'
+    return this.obj
+   }, 1000)
+  }
+ },
+ watch: {
+  /*test () {								//侦听test值变化, 触发了watch属性时
+   setTimeout(() => {
+    this.obj1.a = this.test + 'word'
+   }, 1000)
+  }*/
+ },
+ mounted () {
+  this.test = 'hello'
+ }
+})
+</script>
+</html>

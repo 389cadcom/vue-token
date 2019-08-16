@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>自定义指令</title>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+</head>
+<style>
+#app span{
+	display: inline-block;
+	animation: filp 1s 0s ease-in-out both;
+}
+@keyframes filp{
+	0%{
+		opacity: 0;
+	}
+	100%{
+		opacity: 1;
+	}
+}
+</style>
+
+<body>
+<div id="app">
+	<!--指令名、参数、修饰符、表达式、值-->
+	<h3>Directive</h3>
+	<ul>
+		<li><p v-color:style.modify='"blue"'>directives --> color</p></li>
+		<li><input v-focus type="text" name=""/></li>
+	</ul>
+	<hr>
+	<div class="animal">
+		<span v-for="(item, index) in str" :style="{animationDelay: `${.5 + index * 0.3}s`}">{{ item }}</span>
+	</div>
+	<hr>
+	<div class="cutdown">
+		<button @click="startCount">倒计时</button>
+		<p v-countdown v-if="show" data-count="60">60</p>
+	</div>
+</div>
+</body>
+<script>
+//bind 和 update 时触发相同行为, 不管其他钩子
+Vue.directive('color', (el, binding)=>{
+	console.dir(binding)
+	el.style.color = binding.value
+})
+
+Vue.directive('focus', {
+	inserted(el, binding){
+		el.focus()
+	}
+})
+
+//自定义--指令倒计时
+Vue.directive('countdown', (el, binding)=>{
+	var timer, count = el.getAttribute('data-count')
+	el.innerHTML = count
+	if(timer){
+		clearInterval(timer)
+		timer = null
+	}
+	timer = setInterval(()=>{
+		if(count <=0){
+			clearInterval(timer)
+			timer = null
+		}else{
+			count--;
+			el.innerHTML = count;
+			el.setAttribute('data-count', count)
+		}
+	}, 1000)
+})
+
+new Vue({
+	el: '#app',
+	data: {
+		show: false,
+		str: 'hello world'
+	},
+	methods: {
+		startCount(){
+			this.show = true
+		}
+	}
+})
+</script>
+
+</html>

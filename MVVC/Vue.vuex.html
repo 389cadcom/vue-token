@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>Vuex实例</title>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script src="https://cdn.bootcss.com/vuex/3.0.1/vuex.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/babel-standalone/6.26.0/babel.min.js"></script>-->
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+</head>
+<style>
+.flex{
+	display: flex;
+	justify-content:space-around;
+}
+</style>
+
+<body>
+<div id="app">
+	{{msg}}
+	<p>v-if {{obj.first + obj.val}}</p>
+	<ul class="flex">
+		<li>store:{{ $store.state.count }}</li>
+		<li>本地computed:{{total}}</li>
+		<li>全局mapState: {{count}}</li>
+	</ul>
+	<button @click="addHandler" class="wrap">add</button>
+</div>
+</body>
+<!--<script type="text/babel">-->
+<script>
+//TODO this.$store
+Vue.prototype.log = (val)=>{
+	console.log(JSON.stringify(val, null, 2))
+}
+var getData = ()=>{
+	return axios.get('res/test.json')
+}
+/*getData().then( res => {
+	console.log(res)
+})*/
+
+var store = new Vuex.Store({
+	strict: true,
+	state: {
+		count: 0,
+		datas: {},
+		arr: [1, 2, 3, 4, 5, 6]
+	},
+	//链式函数, 同过方法访问过滤内容
+	getters: { 		
+		ary: state => state.arr.filter( item => item % 2==0),
+		
+		getById: state => (id) => state.arr.filter( item => item != id),
+		findById: state => (id) => state.arr.find(  item => item == id )
+	},
+	mutations: {	//state作为其第一个参数
+		add(state, arg){
+			state.count = arg;
+		},
+		//获取数据
+		gotData(state, res){
+			state.datas = res.data.data
+		}
+	},
+	actions: {		//context作为其第一个参数
+		add({commit, state}, arg){
+			//{state, getters, commit, dispatch}
+			setTimeout(()=>{
+				commit('add', arg)
+			}, 3000)
+		},
+		async getData({commit}){
+			commit('gotData', await getData())
+		}
+	}
+})
+/**
+ * TODO 
+ * 单独构建版本
+ * 根实例  store.state
+ * 子组件 this.$store.commit()
+ */
+//import { mapState } from 'vuex'
+var mapState 		 = Vuex.mapState			//函数返回对象, 与局部计算属性混合使用
+var mapGetters 	 = Vuex.mapGetters
+var mapMutations = Vuex.mapMutations
+var mapActions   = Vuex.mapActions
+
+new Vue({
+	el: '#app',
+	data: {
+		obj: {
+			val: 2
+		},
+		msg: 'Vuex.Store',
+	},
+	store: store,
+	computed: {
+		total(){
+			return store.state.count
+		},
+		//后面覆盖前面
+		...mapState({
+			count: state => state.count,
+			countAlias: 'count',
+			amount: function(state){								//常规函数取得this对象
+				return state.count + ' ' + this.msg
+			}
+		}),
+		...mapState(['count']),
+		...mapGetters(['ary', 'findById'])
+	},
+	mounted(){
+//		this.$store.commit('add', 10)
+		var promise = this.$store.dispatch('add', 20)
+		console.log(promise)
+	},
+	methods: {
+		addHandler(){
+			store.dispatch('getData', 30)
+		}
+	}
+})
+</script>
+
+</html>

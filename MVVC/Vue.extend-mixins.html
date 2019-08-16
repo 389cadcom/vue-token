@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>混合与继承--data, props, event, methods</title>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+</head>
+<style>
+.wrap{display: flex;}
+</style>
+<body>
+<div id="app">
+	{{msg}} config.productionTip
+	<div class="wrap">
+		<ul>
+			<li>extends: {{extend}}</li>
+			<li>mixins: {{mix1}}</li>
+			<li>data: {{msg}}</li>
+		</ul>
+	</div>
+</div>
+
+<hr />
+<div id="el">Element</div>
+</body>
+<script>
+Vue.config.productionTip = false;
+
+//extends -- Object 
+var extend = Vue.extend({
+	data() {
+		return{
+			msg: 'msg',
+			mix1: 'extend',
+			extend: 'extend'
+		}
+	},
+	created(){
+		console.log('extend created')
+	},
+	methods: {
+		get(){
+			console.log('extend methods get')
+		}
+	}
+})
+new extend({el: '#app'})
+
+//mixins -- Array
+var mixin1 = {
+	data: {
+		mix1: 'mix1'
+	},
+	created(){
+		console.log('mix1 created')
+		this.get()
+	},
+	mounted(){
+		console.log('mixins mounted')
+	},
+	methods: {
+		
+	}
+}
+//new
+var vm = new Vue({
+	el: '#app',
+	extends: extend,
+	mixins: [mixin1],
+	data: {
+		msg: 'Vue2.5.16'
+	},
+	created(){
+		console.log('new Vue created')
+	},
+	mounted(){
+		console.log('new mounted')
+	}
+})
+
+//vue-router render: h => h(Hello)
+var Hello = Vue.component('Hello', {
+	template: `<div>
+		<p>template: Hello</p>
+		<p>render: h => h(Hello)</p>
+	</div>`,
+	mounted(){
+		console.log('Hello')
+	}
+})
+
+</script>
+</html>

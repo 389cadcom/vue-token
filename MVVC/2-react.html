@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/react/16.4.0/umd/react.development.js"></script>
+	<script src="https://cdn.bootcss.com/react-dom/16.4.0/umd/react-dom.development.js"></script>
+	<script src="https://cdn.bootcss.com/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+
+<body>
+<div id="app"></div>
+
+<script type="text/babel">
+//	import React, {Component} from 'react'
+	//子组件
+	class SubCounter extends React.Component {
+		constructor(props){
+			super(props)
+		}
+		componentWillMount(){
+			console.log('8、子组件挂载之前')
+		}
+		componentDidMount(){
+			console.log('8-1、子组件挂载完成')
+		}
+		tick(){
+			this.timer = setInterval(()=>{
+				var opacity = this.props.opacity
+				opacity -= 0.05
+				
+				if(opacity < .1){ opacity=1 }
+				this.setState({opacity: opacity})
+			}, 1000)
+		}
+    componentWillReceiveProps() {
+      console.log('9、子组件将要接收到新属性 willReceiveProps');
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+      console.log('10、子组件是否需要更新');
+      if (nextProps.number < 5) return true;
+      return false;
+    }
+    componentWillUpdate(nextProps, nextState) {
+      console.log('11、子组件将要更新');
+    }
+    componentDidUpdate(prevProps, prevState) {
+      console.log('13、子组件更新完成');
+    }
+    componentWillUnmount() {
+      console.log('14、子组件将卸载 abort');
+    }
+    render() {
+      console.log('12、子组件渲染render');
+      return <p>子组件(this.props):{this.props.number}</p>;
+    }
+  }
+
+	//父组件
+  class Counter extends React.Component {
+		constructor(props){
+			super(props)
+			this.state = {
+				number: 0
+			}
+		}
+    componentWillMount() {
+      console.log('3、父组件挂载之前');
+    }
+    componentDidMount() {
+      console.log('5、父组件挂载完成');
+    }
+    shouldComponentUpdate(nextProps, nextState) {					//state.number < 15更新
+      console.log('6、父组件是否需要更新', nextState.number);
+      if (nextState.number < 15) return true;
+      return false;
+    }
+    componentWillUpdate(prevProps, prevState) {
+      console.log('7、父组件将要更新willUpdate', prevState.number);
+    }
+    componentDidUpdate(prevProps, prevState) {
+      console.log('8、父组件更新完成', prevState.number);
+    }
+    render() {
+      console.log('4、父组件渲染render');
+      return (
+        <div className="parent-count">
+        	<p>React函数绑定this</p>
+          <p>父组件 state: {this.state.number}</p>
+		     <button onClick={ this.handleClick }>+</button>
+          {this.state.number < 10 ? ( <SubCounter number={this.state.number} /> ) : null}
+        </div>
+      );
+    }
+    handleClick = () => {
+      this.setState({
+        number: this.state.number + 1
+      });
+    }
+  }
+  
+  //函数组件
+	let HelloWorld1 = (props) => <div onClick={ props.onClick }>Hello {props.name}</div>
+	//TODO props父元素定义的属性内容
+  function HelloWorld(props, index){
+  	console.log(props, index)
+  	return (
+  		<div onClick={ props.onClick }>Hello {props.name}</div>
+  	)
+  }
+  //TODO props父元素定义的属性内容
+  class HelloWorld2 extends React.Component{
+  	constructor(props){
+  		super(props)
+  	}
+  	render(){
+  		return (
+  			<div onClick={ this.props.onClick }>Hello {this.props.name}</div>
+  		)
+  	}
+  }
+  //类组件
+  class Someone extends React.Component {
+  	state = {
+      name: 'Someone ^_^'
+    }
+  	//箭头函数绑定
+    handler = () => this.setState({ name: 'You' })
+    render() {
+      return (
+      	<div>
+          <HelloWorld name={this.state.name} onClick={ this.handler }/> 
+       	</div>
+      );
+    }
+  }
+  //列表, key
+  let ListItem = (props) => <li>{props.value}</li>
+  function NumberList(props){
+		var arr = props.arr
+		var ListItems = arr.map( (item, i) => (
+			<ListItem key = {i} value={item}/>
+		))
+		return (
+			<ul>
+				{ListItems}
+			</ul>
+		)
+	}
+  function NumberList(props){
+  	var arr;											//声明在外面是因为 {} 中不能出现var,const,let等这种关键字
+  	return (
+  		<ul>
+  			{
+  				arr = props.arr,				//TODO 注意这里要加逗号
+  				arr.map( (item, i) => (
+						<ListItem key = {i} value={item}/>
+					))
+  			}
+  		</ul>
+  	)
+  }
+	var arr = ['a', 'b', 'c']
+	//DOM渲染
+  ReactDOM.render(
+  	<div>
+  	{/* <Someone /> */}
+  		<hr/>
+  		<Counter />
+  		<hr />
+  	</div>,
+  	document.getElementById('app')
+  );
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>演示：基于vue2.0的活动倒计时组件countdown</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/demo.css">
+</head>
+<body>
+<div id="demo">
+ <div class="container">
+  <header>
+      <div class="row">
+          <div class="col-md-3 col-xs-12"><h1 class="logo"><a href="http://www.helloweba.net" title="返回helloweba首页">helloweba</a></h1></div>
+          <div class="col-md-9 text-right"></div>
+      </div>
+  </header>
+  <div class="row main">
+      <div class="col-md-12">
+          <h2 class="top_title"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><a href="http://www.helloweba.net/javascript/585.html">基于vue2.0的活动倒计时组件countdown</a></h2>
+          <div class="container" style="width: 96%; margin: 30px auto">
+                  <div class="panel panel-default">
+                      <div class="panel-heading">
+                          <b>默认配置</b>
+                      </div>
+                      <div class="panel-body text-danger">
+                          <count-down @start_callback="startHandler(1)" @end_callback="finishHandler(1)" 
+                          	:current-time="1481450106" :start-time="1481550116" :end-time="1481450126" >
+                          </count-down>
+                      </div>
+                  </div>
+
+                  <div class="panel panel-default">
+                      <div class="panel-heading">
+                          <b>自定义文字</b>
+                      </div>
+                      <div class="panel-body text-danger">
+                          <count-down :current-time="1481450106" :start-time="1481450116" :end-time="1481450126" :tip-text="'自定义开始文字'" :tip-text-end="'自定义结束文字'" :end-text="'结束啦～'" v-on:start_callback="countDownS_cb(2)" v-on:end_callback="countDownE_cb(2)"></count-down>
+                      </div>
+                  </div>
+
+                  <div class="panel panel-default">
+                      <div class="panel-heading">
+                          <b>不传服务器当前时间戳(默认获取用户本地时间戳)</b>
+                      </div>
+                      <div class="panel-body text-danger">
+                          <count-down :start-time="startTime" :end-time="endTime" 
+                          	@start_callback="startHandler(3)" @end_callback="finishHandler(3)"></count-down>
+                      </div>
+                  </div>
+ 
+            </div>
+      </div>
+  </div>
+</div>
+</div>
+   
+<script type="text/javascript" src="./lib/vue2-countdown.js"></script>
+<script type="text/javascript">
+var vm = new Vue({
+	el: '#demo',
+	data:{
+		callBk:'',
+		startTime: Date.now() +(100*300),
+		endTime: Date.now() + (100*1500)
+	},
+	components: {
+		'count-down': countdown,
+	},
+	methods:{
+		startHandler:function(a){
+			console.log('callBack--'+a+'--开始倒计时结束回调');
+		},
+		finishHandler:function(a){
+			console.log('callBack--'+a+'--活动剩余倒计时结束回调');
+		}
+	},
+})
+</script>
+</body>
+</html>
