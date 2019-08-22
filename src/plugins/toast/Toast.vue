@@ -19,17 +19,7 @@ export default {
       type: String,
       default: 'center'
     }
-  },
-  data() {
-    return {
-      show: false
-    }
-  },
-  methods: {
-    name() {
-
-    }
-  },
+  }
 }
 </script>
 <style>

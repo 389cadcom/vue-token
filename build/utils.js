@@ -60,7 +60,7 @@ exports.cssLoaders = function (options) {
       loader: 'sass-resource-loader',
       options: {
         // sourceMap: options.sourceMap,
-        // resources: path.resolve(__dirname, '../src/assets/sass/variables.scss')
+        // resources: path.resolve(__dirname, '../src/assets/sass/_utils.scss')
       }
     })
   */

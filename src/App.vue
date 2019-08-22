@@ -38,12 +38,10 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+@import './assets/sass/_reset.scss';
+@import './assets/sass/_utils.scss';
 
-<style>
-*{
-  margin: 0;
-  padding: 0;
-}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -52,17 +50,14 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-.h1{
-  color: red;
-  text-transform: uppercase;
-  margin-top: 100px;
-  text-align: center;
-  font-size: 2rem;
-  line-height: 1;
-  animation: letterspacing 1s infinite alternate ease-in-out;
-  display: block;
-  letter-spacing: .5rem;
+.ellipsis{
+  width: 100%;
+  @extend %ellipsis;
 }
+.multi2{
+  @include ellipsis(2);
+}
+
 @keyframes letterspacing {
   to {
     letter-spacing: -35px;

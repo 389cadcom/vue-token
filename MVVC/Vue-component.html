@@ -3,6 +3,7 @@
 <html>
 <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
 	<title></title>
 </head>
 <style type="text/css">
@@ -12,90 +13,121 @@
 <div id="app10" v-cloak>
     <p>总数：{{total}}</p>
     <my-component10 v-model="total"></my-component10>
-    <jsx routes='10'></jsx>
     <button @click="reduce">-</button>
+    <br>
     <input-event :data-count="10" placeholder="请输入内容" @click="clickHandler"></input-event>
+    <br>
+    <jsx routes='10'></jsx>
+    <br>
+    <sub-com :show.sync='valueChild' :total.sync="total"></sub-com>
+    <button @click="changeValue">toggle</button>
 </div>
 </body>
 <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
 
 <script>
 var bus = new Vue();
-Vue.component('my-component10',{
-    template: '<div>' +
-    			'<button @click="increase">+</button>' + 
-                '<input :value="value" @input="update"/>'+
-              '</div>',
-    props: ['value'],
-    data(){
-    	return {
-    		count: '中介模式传递参数'
-    	}
-    },
-    mounted(){
-    	console.log(this.value)
-    },
-    methods:{
-        increase: function(){
-        	bus.$emit('update', event, this.count)
-            this.$emit('input',this.count)　　//注意这个地方，广播的事件名称为特殊的input
-        },
 
-        update(){
-        	this.$emit('input', event.target.value)
-        }
+//vue默认侦听input事件
+Vue.component('my-component10',{
+  template: `<div>
+  	<button @click="increase">+</button>
+		<input :value="value" @input="update"/>
+  </div>`,
+  props: ['value'],
+  data(){
+  	return {
+  		count: '事件总线模式传递参数'
+  	}
+  },
+  methods:{
+    increase(){
+    	bus.$emit('update', event, this.count)
+    	
+      this.$emit('input',this.count)　　					
+    },
+		//vue默认侦听input事件
+    update(){
+    	this.$emit('input', event.target.value)
     }
+  }
 });
+
+//自定义事件 2.3+新增 sync修饰符
+Vue.component('SubCom', {
+	template: `<div style="border:1px solid red">
+	    <p>默认初始值是{{show}}，所以是显示的{{total}}</p>
+
+	    <button type="button" @click="closeDiv">关闭</button>
+	    <button type="button" @click="changeTotal">更新</button>
+	  </div>
+ `,
+  props:['show', 'total'],
+  methods: {
+    closeDiv() {
+      this.$emit('update:show', false); 
+    },
+    changeTotal(){
+    	this.$emit('update:total', 10)
+    }
+  }
+})
+
+//vue2.4新增内容   $attrs  $listeners
+Vue.component('InputEvent', {
+	props: ['data-count'],
+	template: `<input v-on="$listeners" v-bind="$attrs" type="text"/>`
+})
+
 
 //TODO jsx render函数来渲染
 Vue.component('jsx', {
-//	props: ['routes'],
+	props: ['routes'],
 	template: `<li>123</li>`
 	/*render(h, {props}){
 		return  props.routes.map( route => <li key={route.name}>{route.title}</li> )
 	}*/
 })
 
-//vue2.4新增内容
-Vue.component('InputEvent', {
-	props: ['data-count'],
-	template: `<input v-on="$listeners" v-bind="$attrs" type="text"/>`
-})
 
 var app10 = new Vue({
-    el: '#app10',
-    data:{
-        total: 0
-    },
-    computed: {
-    	//TODO ??
-		  listeners() {
-		    return {
-		      ...this.$listeners,
-		      input: event => 
-		        this.$emit('input', event.target.value)
-		    }
-		  }
-		},
-    watch: {
-    	total(){
-    		console.log('total is change')
-    	}
-    },
-    mounted(){
-    	var vm = this;
-    	bus.$on('update', function(type, a){
-    		console.log(type, a)
-    	})
-    },
-    methods:{
-    	reduce(){
-    		this.total--;
-    	},
-    	clickHandler(e){
-    		console.log(e)
-    	}
-    }
+  el: '#app10',
+  data:{
+    total: 0,
+    valueChild: true
+  },
+  computed: {
+  	//TODO ??
+	  listeners() {
+	    return {
+	      ...this.$listeners,
+	      input: event => 
+	        this.$emit('input', event.target.value)
+	    }
+	  }
+	},
+  watch: {
+  	total(){
+  		console.log('total is change')
+  	}
+  },
+  mounted(){
+  	//事件总线传值
+  	bus.$on('update', function(type, a){
+  		console.log(type, a)
+  	})
+  },
+  methods:{
+  	reduce(){
+  		this.total--;
+  	},
+  	clickHandler(e){
+  		console.log(e)
+  	},
+  	changeValue(){
+  		this.valueChild = !this.valueChild
+  	}
+  }
 });
 </script>
 <hr />

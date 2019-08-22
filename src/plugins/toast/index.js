@@ -5,45 +5,54 @@ let $vm, timer = null;
 
 //对象方式
 Plugin.install = (Vue, pluginOptions) => {
-  const Toast = Vue.extend(ToastComponent)
+  let Toast = Vue.extend(ToastComponent)
+  //初始化
   if(!$vm){
     $vm = new Toast({
-      el: document.createElement('div')
+      el: document.createElement('div'),
+      data() {
+        return {
+          show: true
+        }
+      },
     })
     document.body.appendChild($vm.$el)
   }
-  // console.log($vm.$options.props);
 
-  var defaults = {}
-  for(let key in $vm.$options.props) {
-    defaults[key] = $vm.$options.props[key].default
+  //默认属性值
+  let defaultOpts = {}
+  for (const key in $vm.$options.props) {
+    defaultOpts[key] = $vm.$options.props[key].default;
   }
-  defaults = {...defaults, ...pluginOptions}
 
-  // 添加实例方法
+  //挂载方法
   Vue.prototype.$toast = (text, duration = 2000) => {
-    $vm.text = text || defaults.text
     $vm.show = true
+    if(text)
+      $vm.text = text;
 
     timer = setTimeout(() => {
       $vm.show = false
       clearTimeout(timer)
-      timer = null
-    }, duration)
+      timer = false
+    }, duration - 250)
   }
 
-  //护展方法
+  //扩展方法-传递参数执行方法
+  Vue.prototype.$toast.text = (text) => {
+    Vue.prototype.$toast(text)
+  }
   ['top', 'center', 'bottom'].forEach( type => {
-    Vue.prototype.$toast[type] = (tips) => {
-      Vue.prototype.$toast(tips, type)
+    Vue.prototype.$toast[type] = (text) => {
+      Vue.prototype.$toast(text, type)
     }
   })
 }
 
 //函数方式
 /* const Plugin = (Vue, options) =>{
-  const Instance = Vue.extend(ToastComponent)
-  const $vm = new Instance()
+  const Toast = Vue.extend(ToastComponent)
+  const $vm = new Toast()
   document.body.appendChild($vm.$mount().$el)
 
   $vm.show = true;
@@ -52,7 +61,6 @@ Plugin.install = (Vue, pluginOptions) => {
     clearTimeout(timer)
     timer = null
   }, 2000)
-
 }
 Plugin.install = (Vue, options) =>{
   Vue.prototype.$toast = Plugin.bind(this, Vue, options)

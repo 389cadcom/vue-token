@@ -1,18 +1,22 @@
-//webpack打包 -webkit-line-clamp丢失
+//webpack打包 -webkit-box-orient: vertical丢失
 //设置browserslist "not ie <= 8"
 
-@mixin ellipsis($line:1){
+@mixin ellipsis($line:1, $width: 100%){
+  overflow: hidden;
+
   @if($line == 1) {
+    max-width: $width;
     white-space: nowrap;
+    text-overflow: ellipsis;
   } @else {
     display: -webkit-box;
-    -webkit-line-clamp: $line;
-    -webkit-box-orient: vertical;
     word-wrap: break-word;
     word-break: break-all;
+    -webkit-line-clamp: $line;
+    /*! autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /*! autoprefixer: on */
   }
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 %ellipsis {
 	@include ellipsis
@@ -164,18 +168,18 @@
 }
 
 //去除单位
-@function stripUnits($number){
+@function strip_units($number){
   @return $number / ($number*0 + 1);
 }
 
 @function px2rem($num, $base:37.5){
-  @return stripUnits($num) / 37.5 * 1rem
+  @return strip_units($num) / $base * 1rem;
 }
 
 @mixin px2rem($attr, $num, $base:37.5) {
   $list: ();
   @for $i from 1 through length($num) {
-    $value: stripUnits(nth($num, $i)) / $base * 1rem;
+    $value: strip_units(nth($num, $i)) / $base * 1rem;
     $list: append($list, $value);                             //$list添加
   }
   #{$attr}: $list;

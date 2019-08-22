@@ -1,20 +1,29 @@
 @import './sass/_utils';
 
 
-.arrow1{
-  @include triangle
-}
-.arrow2{
-  @include triangle(left)
-}
-.arrow3{
-  @include triangle(top)
-}
-.arrow4{
-  @include triangle(bottom)
+.header {
+  @at-root #{&}-top{      //跳出当前
+    margin: 0;
+  }
+  .page & {
+    padding: 0;
+  }
 }
 
+//媒介
+@mixin tablet {
+  @media (max-width:767px){
+	  @content;
+  }
+}
+@include tablet {
+	p{font-size:12px;}
+}
 
-.arrow{
-  @include arrow;
+$num: 4;
+@while $num > 0 {
+  .list#{$num}{
+    padding-left: percentage($num/6)
+  }
+  $num: $num - 1;
 }
